@@ -1,0 +1,68 @@
+version: '3'
+
+services:
+  
+  mymysql:
+    image: mysql:8.0.30
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=firevivaldixdzzz
+      - MYSQL_DATABASE=interestingdb
+      - MYSQL_USER=interestinguser
+      - MYSQL_PASSWORD=interestingpassword
+      - TZ=America/Bogota
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci','--default-time-zone=-05:00']
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+
+  myredis:
+    image: redis:7.0
+    restart: always
+    expose:
+      - "6379"
+
+  backend1:
+    image: backend:0.0.1
+    restart: always
+    expose:
+      - "80"
+    volumes:
+      - ./envs:/app/envs:ro
+    environment:
+      - PORT=80
+      - REDIS_HOST=myredis
+      - MYSQL_HOST=mymysql
+  
+  backend2:
+    image: backend:0.0.1
+    restart: always
+    expose:
+      - "80"
+    volumes:
+      - ./envs:/app/envs:ro
+    environment:
+      - PORT=80
+      - REDIS_HOST=myredis
+      - MYSQL_HOST=mymysql
+
+  loadbalancer:
+    image: haproxy:2.6
+    restart: always
+    links:
+        - backend1
+        - backend2
+    ports:
+      - "8080:80"
+    expose:
+        - "80"
+    volumes:
+        - ./haproxy:/usr/local/etc/haproxy # ruta del archivo de configuración de haproxy
+  
+
+
+volumes:
+  redis_data:
+  mysql_data:
