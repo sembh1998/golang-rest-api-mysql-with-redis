@@ -3,7 +3,7 @@ version: '3'
 services:
   
   mymysql:
-    image: mysql:8.0.30
+    image: mysql:8.0
     restart: always
     ports:
       - "3307:3306"
@@ -27,10 +27,11 @@ services:
   backend1:
     image: backend:0.0.1
     restart: always
+    depends_on:
+      - mymysql
+      - myredis
     expose:
       - "80"
-    volumes:
-      - ./envs:/app/envs:ro
     environment:
       - PORT=80
       - REDIS_HOST=myredis
@@ -39,10 +40,11 @@ services:
   backend2:
     image: backend:0.0.1
     restart: always
+    depends_on:
+      - mymysql
+      - myredis
     expose:
       - "80"
-    volumes:
-      - ./envs:/app/envs:ro
     environment:
       - PORT=80
       - REDIS_HOST=myredis
@@ -51,17 +53,17 @@ services:
   loadbalancer:
     image: haproxy:2.6
     restart: always
+    depends_on:
+      - backend1
+      - backend2
     links:
         - backend1
         - backend2
     ports:
+      - "7070:70"
       - "8080:80"
-    expose:
-        - "80"
     volumes:
         - ./haproxy:/usr/local/etc/haproxy # ruta del archivo de configuración de haproxy
-  
-
 
 volumes:
   redis_data:
