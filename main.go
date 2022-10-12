@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"golang-rest-api-mysql-with-redis/src/core/config"
 	"os"
+	"runtime"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,16 +17,14 @@ func main() {
 
 	router.GET("/", func(c *gin.Context) {
 		hostname, err := os.Hostname()
+		cores := runtime.NumCPU()
 		if err != nil {
-			c.JSON(200, gin.H{
-				"message": "Hello, World!",
-				"serving": "no hostname",
-			})
-			return
+			hostname = "unknown"
 		}
 		c.JSON(200, gin.H{
 			"message": "Hello, World!",
 			"serving": hostname,
+			"cores":   cores,
 		})
 	})
 
