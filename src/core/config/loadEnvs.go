@@ -24,7 +24,7 @@ func LoadEnvs() {
 	validateEnvVars(RedisDB, "0")
 	validateEnvVars(RedisUser, "")
 
-	validateEnvVars(Port, "8080")
+	validateEnvVars(Port, "8084")
 
 }
 

@@ -21,8 +21,13 @@ services:
   myredis:
     image: redis:7.0
     restart: always
-    expose:
-      - "6379"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/users.acl:/etc/redis/users.acl
+    command: redis-server /usr/local/etc/redis/redis.conf
 
   backend1:
     image: backend:0.0.1

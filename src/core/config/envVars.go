@@ -15,4 +15,7 @@ const (
 	RedisUser = "REDIS_USER"
 
 	Port = "PORT"
+
+	LocalHostname  = "LOCAL_HOSTNAME"
+	LocalCoreCount = "LOCAL_CORE_COUNT"
 )

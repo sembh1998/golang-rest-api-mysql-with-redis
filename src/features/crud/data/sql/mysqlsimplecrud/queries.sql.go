@@ -79,7 +79,7 @@ func (q *Queries) GetAllDepartments(ctx context.Context) ([]Department, error) {
 
 const getAllEmployees = `-- name: GetAllEmployees :many
 SELECT 
-    e.id, e.name, department_id, d.id, d.name 
+    e.id, e.name, e.department_id, d.name as department
 FROM 
     employee e 
     left join department d on e.department_id = d.id
@@ -89,8 +89,7 @@ type GetAllEmployeesRow struct {
 	ID           int32
 	Name         string
 	DepartmentID int32
-	ID_2         sql.NullInt32
-	Name_2       sql.NullString
+	Department   sql.NullString
 }
 
 func (q *Queries) GetAllEmployees(ctx context.Context) ([]GetAllEmployeesRow, error) {
@@ -106,8 +105,7 @@ func (q *Queries) GetAllEmployees(ctx context.Context) ([]GetAllEmployeesRow, er
 			&i.ID,
 			&i.Name,
 			&i.DepartmentID,
-			&i.ID_2,
-			&i.Name_2,
+			&i.Department,
 		); err != nil {
 			return nil, err
 		}
@@ -140,7 +138,7 @@ func (q *Queries) GetDepartment(ctx context.Context, id int32) (Department, erro
 
 const getDepartmentEmployees = `-- name: GetDepartmentEmployees :many
 SELECT 
-    id, name, department_id
+    e.id, e.name, e.department_id
 FROM
     employee e
 WHERE
@@ -172,7 +170,7 @@ func (q *Queries) GetDepartmentEmployees(ctx context.Context, id int32) ([]Emplo
 
 const getEmployee = `-- name: GetEmployee :one
 SELECT 
-    e.id, e.name, department_id, d.id, d.name 
+    e.id, e.name, e.department_id, d.name as department 
 FROM 
     employee e 
     left join department d on e.department_id = d.id
@@ -184,8 +182,7 @@ type GetEmployeeRow struct {
 	ID           int32
 	Name         string
 	DepartmentID int32
-	ID_2         sql.NullInt32
-	Name_2       sql.NullString
+	Department   sql.NullString
 }
 
 func (q *Queries) GetEmployee(ctx context.Context, id int32) (GetEmployeeRow, error) {
@@ -195,8 +192,7 @@ func (q *Queries) GetEmployee(ctx context.Context, id int32) (GetEmployeeRow, er
 		&i.ID,
 		&i.Name,
 		&i.DepartmentID,
-		&i.ID_2,
-		&i.Name_2,
+		&i.Department,
 	)
 	return i, err
 }

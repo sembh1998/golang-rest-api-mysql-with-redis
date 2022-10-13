@@ -9,20 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getAllDepartments(c *gin.Context) {
-	departments, err := usecases.GetAllDepartments()
+func getAllEmployees(c *gin.Context) {
+	employees, err := usecases.GetAllEmployees()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":   err.Error(),
 			"serving": os.Getenv(config.LocalHostname),
-			"cores":   os.Getenv(config.LocalCoreCount),
-		})
+			"cores":   os.Getenv(config.LocalCoreCount)})
 		return
 	}
-	c.JSON(http.StatusOK,
-		gin.H{
-			"departments": departments,
-			"serving":     os.Getenv(config.LocalHostname),
-			"cores":       os.Getenv(config.LocalCoreCount),
-		})
+	c.JSON(http.StatusOK, gin.H{
+		"employees": employees,
+		"serving":   os.Getenv(config.LocalHostname),
+		"cores":     os.Getenv(config.LocalCoreCount),
+	})
 }

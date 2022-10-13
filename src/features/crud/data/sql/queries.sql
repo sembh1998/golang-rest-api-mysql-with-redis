@@ -1,13 +1,13 @@
 -- name: GetAllEmployees :many
 SELECT 
-    * 
+    e.*, d.name as department
 FROM 
     employee e 
     left join department d on e.department_id = d.id;
 
 -- name: GetEmployee :one
 SELECT 
-    * 
+    e.*, d.name as department 
 FROM 
     employee e 
     left join department d on e.department_id = d.id
@@ -48,7 +48,7 @@ DELETE FROM department WHERE id = sqlc.arg(id);
 
 -- name: GetDepartmentEmployees :many
 SELECT 
-    *
+    e.*
 FROM
     employee e
 WHERE
