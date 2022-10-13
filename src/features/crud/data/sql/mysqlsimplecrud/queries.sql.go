@@ -136,13 +136,29 @@ func (q *Queries) GetDepartment(ctx context.Context, id int32) (Department, erro
 	return i, err
 }
 
+const getDepartmentByName = `-- name: GetDepartmentByName :one
+SELECT 
+    id, name
+FROM
+    department d
+WHERE
+    name = ?
+`
+
+func (q *Queries) GetDepartmentByName(ctx context.Context, name string) (Department, error) {
+	row := q.queryRow(ctx, q.getDepartmentByNameStmt, getDepartmentByName, name)
+	var i Department
+	err := row.Scan(&i.ID, &i.Name)
+	return i, err
+}
+
 const getDepartmentEmployees = `-- name: GetDepartmentEmployees :many
 SELECT 
     e.id, e.name, e.department_id
 FROM
     employee e
 WHERE
-    department_id = ?
+    e.department_id = ?
 `
 
 func (q *Queries) GetDepartmentEmployees(ctx context.Context, id int32) ([]Employee, error) {

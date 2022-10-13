@@ -17,6 +17,7 @@ type Querier interface {
 	GetAllDepartments(ctx context.Context) ([]Department, error)
 	GetAllEmployees(ctx context.Context) ([]GetAllEmployeesRow, error)
 	GetDepartment(ctx context.Context, id int32) (Department, error)
+	GetDepartmentByName(ctx context.Context, name string) (Department, error)
 	GetDepartmentEmployees(ctx context.Context, id int32) ([]Employee, error)
 	GetEmployee(ctx context.Context, id int32) (GetEmployeeRow, error)
 	UpdateDepartment(ctx context.Context, arg UpdateDepartmentParams) (sql.Result, error)

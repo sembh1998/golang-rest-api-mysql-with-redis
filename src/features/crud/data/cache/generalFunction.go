@@ -10,6 +10,7 @@ import (
 )
 
 func GetGeneric(consult string, relatedTables []string) (string, error) {
+
 	redisconn := config.GetRedisConnection()
 
 	rbd := redisconn.Conn
@@ -27,7 +28,7 @@ func GetGeneric(consult string, relatedTables []string) (string, error) {
 	for _, table := range relatedTables {
 		tableDateString, err := rbd.Get(context.Background(), utils.GetMysqlTableKey(table)).Result()
 		if err != nil {
-			err = rbd.Set(context.Background(), utils.GetMysqlTableKey(table), time.Now().UnixNano(), 0).Err()
+			go rbd.Set(context.Background(), utils.GetMysqlTableKey(table), time.Now().UnixNano(), 0).Err()
 			return "", err
 		}
 		tableDate, err := strconv.ParseInt(tableDateString, 10, 64)
@@ -46,6 +47,7 @@ func GetGeneric(consult string, relatedTables []string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return valueString, nil
 }
 
@@ -59,6 +61,18 @@ func SetGeneric(consulta, value string) error {
 		return err
 	}
 	err = rbd.Set(context.Background(), utils.GetRedisConsultDateKey(consulta), time.Now().UnixNano(), 0).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateTableGeneric(table string) error {
+	redisconn := config.GetRedisConnection()
+
+	rbd := redisconn.Conn
+
+	err := rbd.Set(context.Background(), utils.GetMysqlTableKey(table), time.Now().UnixNano(), 0).Err()
 	if err != nil {
 		return err
 	}

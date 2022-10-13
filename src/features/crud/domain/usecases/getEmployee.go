@@ -3,6 +3,7 @@ package usecases
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"golang-rest-api-mysql-with-redis/src/core/config"
 	"golang-rest-api-mysql-with-redis/src/features/crud/data/cache"
 	"golang-rest-api-mysql-with-redis/src/features/crud/data/sql/mysqlsimplecrud"
@@ -10,39 +11,39 @@ import (
 	"log"
 )
 
-func GetAllEmployees() ([]adapter.EmployeeResponse, error) {
+func GetEmployee(id int32) (adapter.EmployeeResponse, error) {
 
-	consult := "GetAllEmployees"
+	consult := fmt.Sprintf("GetEmployee{id:%v}", id)
 
 	tables := []string{"employee", "department"}
 
 	cacheValue, err := cache.GetGeneric(consult, tables)
 	if err == nil {
 		log.Println("Cache hit")
-		returnValue := []adapter.EmployeeResponse{}
+		returnValue := adapter.EmployeeResponse{}
 		err = json.Unmarshal([]byte(cacheValue), &returnValue)
 		if err != nil {
-			return nil, err
+			return adapter.EmployeeResponse{}, err
 		}
 		return returnValue, nil
 	}
-	log.Printf("Error getting employees from cache: %v\n", err)
-	log.Println("Getting employees from database")
+	log.Printf("Error getting employee from cache: %v\n", err)
+	log.Println("Getting employee from database")
 
 	mysqlconn := config.GetMysqlConnection()
 
 	db := mysqlsimplecrud.New(mysqlconn.Conn)
 
-	employees, err := db.GetAllEmployees(context.Background())
+	employee, err := db.GetEmployee(context.Background(), id)
 
 	if err != nil {
-		return nil, err
+		return adapter.EmployeeResponse{}, err
 	}
-	response := adapter.ToGetAllEmployeeResponses(employees)
+	response := adapter.ToEmployeeResponse(employee)
 
 	stringValue, err := json.Marshal(response)
 	if err != nil {
-		log.Printf("Error marshalling employees: %v\n", err)
+		log.Printf("Error marshalling employee: %v\n", err)
 		return response, nil
 	}
 	go cache.SetGeneric(consult, string(stringValue))

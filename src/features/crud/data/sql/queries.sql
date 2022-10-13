@@ -52,5 +52,12 @@ SELECT
 FROM
     employee e
 WHERE
-    department_id = sqlc.arg(id);
+    e.department_id = sqlc.arg(id);
 
+-- name: GetDepartmentByName :one
+SELECT 
+    *
+FROM
+    department d
+WHERE
+    name = sqlc.arg(name);

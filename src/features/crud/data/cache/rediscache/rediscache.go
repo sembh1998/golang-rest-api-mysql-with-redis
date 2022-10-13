@@ -13,10 +13,10 @@ import (
 
 var (
 	ConsultGetAllDepartments          = "GetAllDepartments"
-	GetAllDepartmentsImplicatedTables = []string{"departments"}
+	GetAllDepartmentsImplicatedTables = []string{"department"}
 
 	ConsultGetAllEmployees          = "GetAllEmployees"
-	GetAllEmployeesImplicatedTables = []string{"employees", "departments"}
+	GetAllEmployeesImplicatedTables = []string{"employee", "department"}
 )
 
 func GetAllDepartments() ([]adapter.DepartmentResponse, error) {
@@ -37,7 +37,7 @@ func GetAllDepartments() ([]adapter.DepartmentResponse, error) {
 	for _, table := range GetAllDepartmentsImplicatedTables {
 		tableDateString, err := rbd.Get(context.Background(), utils.GetMysqlTableKey(table)).Result()
 		if err != nil {
-			err = rbd.Set(context.Background(), utils.GetMysqlTableKey(table), time.Now().UnixNano(), 0).Err()
+			go rbd.Set(context.Background(), utils.GetMysqlTableKey(table), time.Now().UnixNano(), 0).Err()
 			return nil, err
 		}
 		tableDate, err := strconv.ParseInt(tableDateString, 10, 64)

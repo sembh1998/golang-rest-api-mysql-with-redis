@@ -8,7 +8,7 @@ type EmployeeResponse struct {
 	DepartmentResponse
 }
 
-func ToEmployeeResponse(employee mysqlsimplecrud.GetAllEmployeesRow) EmployeeResponse {
+func ToEmployeeResponse(employee mysqlsimplecrud.GetEmployeeRow) EmployeeResponse {
 	return EmployeeResponse{
 		ID:   employee.ID,
 		Name: employee.Name,
@@ -19,10 +19,36 @@ func ToEmployeeResponse(employee mysqlsimplecrud.GetAllEmployeesRow) EmployeeRes
 	}
 }
 
-func ToEmployeeResponses(employees []mysqlsimplecrud.GetAllEmployeesRow) []EmployeeResponse {
+func ToGetAllEmployeesResponse(employee mysqlsimplecrud.GetAllEmployeesRow) EmployeeResponse {
+	return EmployeeResponse{
+		ID:   employee.ID,
+		Name: employee.Name,
+		DepartmentResponse: DepartmentResponse{
+			ID:   employee.DepartmentID,
+			Name: employee.Department.String,
+		},
+	}
+}
+
+func ToGetAllEmployeeResponses(employees []mysqlsimplecrud.GetAllEmployeesRow) []EmployeeResponse {
 	employeeResponses := make([]EmployeeResponse, len(employees))
 	for i, employee := range employees {
-		employeeResponses[i] = ToEmployeeResponse(employee)
+		employeeResponses[i] = ToGetAllEmployeesResponse(employee)
 	}
 	return employeeResponses
+}
+
+func ToGetEmployeesByDepartmentResponse(employee []mysqlsimplecrud.Employee, departmentName string) []EmployeeResponse {
+	employeesResponse := make([]EmployeeResponse, len(employee))
+	for i, emp := range employee {
+		employeesResponse[i] = EmployeeResponse{
+			ID:   emp.ID,
+			Name: emp.Name,
+			DepartmentResponse: DepartmentResponse{
+				ID:   emp.DepartmentID,
+				Name: departmentName,
+			},
+		}
+	}
+	return employeesResponse
 }

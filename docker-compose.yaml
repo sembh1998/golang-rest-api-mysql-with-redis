@@ -39,8 +39,16 @@ services:
       - "80"
     environment:
       - PORT=80
-      - REDIS_HOST=myredis
       - MYSQL_HOST=mymysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=interestinguser
+      - MYSQL_PASS=interestingpassword
+      - MYSQL_DB=interestingdb
+      - REDIS_HOST=myredis
+      - REDIS_USER=superduperuser
+      - REDIS_PASS=superduperhiperrecontrastrongpassword
+      - REDIS_PORT=6379
+      - REDIS_DB=0
   
   backend2:
     image: backend:0.0.1
@@ -52,8 +60,16 @@ services:
       - "80"
     environment:
       - PORT=80
-      - REDIS_HOST=myredis
       - MYSQL_HOST=mymysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=interestinguser
+      - MYSQL_PASS=interestingpassword
+      - MYSQL_DB=interestingdb
+      - REDIS_HOST=myredis
+      - REDIS_USER=superduperuser
+      - REDIS_PASS=superduperhiperrecontrastrongpassword
+      - REDIS_PORT=6379
+      - REDIS_DB=0
 
   loadbalancer:
     image: haproxy:2.6

@@ -45,6 +45,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getDepartmentStmt, err = db.PrepareContext(ctx, getDepartment); err != nil {
 		return nil, fmt.Errorf("error preparing query GetDepartment: %w", err)
 	}
+	if q.getDepartmentByNameStmt, err = db.PrepareContext(ctx, getDepartmentByName); err != nil {
+		return nil, fmt.Errorf("error preparing query GetDepartmentByName: %w", err)
+	}
 	if q.getDepartmentEmployeesStmt, err = db.PrepareContext(ctx, getDepartmentEmployees); err != nil {
 		return nil, fmt.Errorf("error preparing query GetDepartmentEmployees: %w", err)
 	}
@@ -95,6 +98,11 @@ func (q *Queries) Close() error {
 	if q.getDepartmentStmt != nil {
 		if cerr := q.getDepartmentStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getDepartmentStmt: %w", cerr)
+		}
+	}
+	if q.getDepartmentByNameStmt != nil {
+		if cerr := q.getDepartmentByNameStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getDepartmentByNameStmt: %w", cerr)
 		}
 	}
 	if q.getDepartmentEmployeesStmt != nil {
@@ -163,6 +171,7 @@ type Queries struct {
 	getAllDepartmentsStmt      *sql.Stmt
 	getAllEmployeesStmt        *sql.Stmt
 	getDepartmentStmt          *sql.Stmt
+	getDepartmentByNameStmt    *sql.Stmt
 	getDepartmentEmployeesStmt *sql.Stmt
 	getEmployeeStmt            *sql.Stmt
 	updateDepartmentStmt       *sql.Stmt
@@ -180,6 +189,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		getAllDepartmentsStmt:      q.getAllDepartmentsStmt,
 		getAllEmployeesStmt:        q.getAllEmployeesStmt,
 		getDepartmentStmt:          q.getDepartmentStmt,
+		getDepartmentByNameStmt:    q.getDepartmentByNameStmt,
 		getDepartmentEmployeesStmt: q.getDepartmentEmployeesStmt,
 		getEmployeeStmt:            q.getEmployeeStmt,
 		updateDepartmentStmt:       q.updateDepartmentStmt,
