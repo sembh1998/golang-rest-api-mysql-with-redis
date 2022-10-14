@@ -19,7 +19,7 @@ func UpdateDepartment(department adapter.DepartmentRequest) error {
 	if err != nil {
 		return err
 	}
-	table := "departments"
+	table := "department"
 
 	go cache.UpdateTableGeneric(table)
 
