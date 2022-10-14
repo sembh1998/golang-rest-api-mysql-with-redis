@@ -24,7 +24,7 @@ func DeleteDepartment(id int32) error {
 		return fmt.Errorf("no department with id %d", id)
 	}
 
-	table := "departments"
+	table := "department"
 
 	go cache.UpdateTableGeneric(table)
 
