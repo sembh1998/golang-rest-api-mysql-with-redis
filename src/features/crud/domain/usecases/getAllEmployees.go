@@ -3,6 +3,7 @@ package usecases
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"golang-rest-api-mysql-with-redis/src/core/config"
 	"golang-rest-api-mysql-with-redis/src/features/crud/data/cache"
 	"golang-rest-api-mysql-with-redis/src/features/crud/data/sql/mysqlsimplecrud"
@@ -30,7 +31,9 @@ func GetAllEmployees() ([]adapter.EmployeeResponse, error) {
 	log.Println("Getting employees from database")
 
 	mysqlconn := config.GetMysqlConnection()
-
+	if mysqlconn == nil {
+		return nil, fmt.Errorf("error getting mysql connection")
+	}
 	db := mysqlsimplecrud.New(mysqlconn.Conn)
 
 	employees, err := db.GetAllEmployees(context.Background())

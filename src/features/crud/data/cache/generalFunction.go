@@ -13,6 +13,10 @@ func GetGeneric(consult string, relatedTables []string) (string, error) {
 
 	redisconn := config.GetRedisConnection()
 
+	if redisconn == nil {
+		return "", fmt.Errorf("redis connection is nil")
+	}
+
 	rbd := redisconn.Conn
 
 	consultDateString, err := rbd.Get(context.Background(), utils.GetRedisConsultDateKey(consult)).Result()
@@ -54,6 +58,10 @@ func GetGeneric(consult string, relatedTables []string) (string, error) {
 func SetGeneric(consulta, value string) error {
 	redisconn := config.GetRedisConnection()
 
+	if redisconn == nil {
+		return fmt.Errorf("redis connection is nil")
+	}
+
 	rbd := redisconn.Conn
 
 	err := rbd.Set(context.Background(), utils.GetRedisConsultKey(consulta), value, 0).Err()
@@ -69,6 +77,10 @@ func SetGeneric(consulta, value string) error {
 
 func UpdateTableGeneric(table string) error {
 	redisconn := config.GetRedisConnection()
+
+	if redisconn == nil {
+		return fmt.Errorf("redis connection is nil")
+	}
 
 	rbd := redisconn.Conn
 

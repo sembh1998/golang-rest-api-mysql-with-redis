@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"fmt"
 	"golang-rest-api-mysql-with-redis/src/core/config"
 	"golang-rest-api-mysql-with-redis/src/features/crud/data/cache"
 	"golang-rest-api-mysql-with-redis/src/features/crud/data/sql/mysqlsimplecrud"
@@ -10,6 +11,9 @@ import (
 
 func CreateDepartment(department adapter.DepartmentRequest) (int64, error) {
 	mysqlconn := config.GetMysqlConnection()
+	if mysqlconn == nil {
+		return 0, fmt.Errorf("error getting mysql connection")
+	}
 	db := mysqlsimplecrud.New(mysqlconn.Conn)
 
 	resp, err := db.CreateDepartment(context.Background(), department.Name)

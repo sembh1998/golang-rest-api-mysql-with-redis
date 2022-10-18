@@ -31,7 +31,9 @@ func GetEmployee(id int32) (adapter.EmployeeResponse, error) {
 	log.Println("Getting employee from database")
 
 	mysqlconn := config.GetMysqlConnection()
-
+	if mysqlconn == nil {
+		return adapter.EmployeeResponse{}, fmt.Errorf("error getting mysql connection")
+	}
 	db := mysqlsimplecrud.New(mysqlconn.Conn)
 
 	employee, err := db.GetEmployee(context.Background(), id)

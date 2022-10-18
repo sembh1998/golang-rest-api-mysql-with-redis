@@ -27,6 +27,9 @@ func GetEmployeesByDepartment(department string) ([]adapter.EmployeeResponse, er
 		log.Printf("Error getting dapartment from cache: %v\n", err)
 		log.Println("Getting dapartment from database")
 		mysqlconn := config.GetMysqlConnection()
+		if mysqlconn == nil {
+			return nil, fmt.Errorf("error getting mysql connection")
+		}
 		db := mysqlsimplecrud.New(mysqlconn.Conn)
 		depInt, err := db.GetDepartmentByName(context.Background(), department)
 		if err != nil {
@@ -60,7 +63,9 @@ func GetEmployeesByDepartment(department string) ([]adapter.EmployeeResponse, er
 	log.Println("Getting dapartment from database")
 
 	mysqlconn := config.GetMysqlConnection()
-
+	if mysqlconn == nil {
+		return nil, fmt.Errorf("error getting mysql connection")
+	}
 	db := mysqlsimplecrud.New(mysqlconn.Conn)
 
 	employees, err := db.GetDepartmentEmployees(context.Background(), departmentInternal.ID)

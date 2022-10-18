@@ -30,7 +30,9 @@ func GetDepartment(id int32) (adapter.DepartmentResponse, error) {
 	log.Println("Getting dapartment from database")
 
 	mysqlconn := config.GetMysqlConnection()
-
+	if mysqlconn == nil {
+		return adapter.DepartmentResponse{}, fmt.Errorf("error getting mysql connection")
+	}
 	db := mysqlsimplecrud.New(mysqlconn.Conn)
 
 	department, err := db.GetDepartment(context.Background(), id)

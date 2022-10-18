@@ -10,6 +10,9 @@ import (
 
 func DeleteDepartment(id int32) error {
 	mysqlconn := config.GetMysqlConnection()
+	if mysqlconn == nil {
+		return fmt.Errorf("error getting mysql connection")
+	}
 	db := mysqlsimplecrud.New(mysqlconn.Conn)
 
 	resp, err := db.DeleteDepartment(context.Background(), id)

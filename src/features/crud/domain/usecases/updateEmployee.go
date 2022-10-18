@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"context"
+	"fmt"
 	"golang-rest-api-mysql-with-redis/src/core/config"
 	"golang-rest-api-mysql-with-redis/src/features/crud/data/cache"
 	"golang-rest-api-mysql-with-redis/src/features/crud/data/sql/mysqlsimplecrud"
@@ -10,6 +11,9 @@ import (
 
 func UpdateEmployee(employee adapter.EmployeeRequest) error {
 	mysqlconn := config.GetMysqlConnection()
+	if mysqlconn == nil {
+		return fmt.Errorf("error getting mysql connection")
+	}
 	db := mysqlsimplecrud.New(mysqlconn.Conn)
 
 	_, err := db.UpdateEmployee(context.Background(), mysqlsimplecrud.UpdateEmployeeParams{

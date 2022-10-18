@@ -1,11 +1,13 @@
 package config
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/go-redis/redis/v9"
 	_ "github.com/go-sql-driver/mysql"
@@ -37,6 +39,16 @@ func GetMysqlConnection() *MysqlConnection {
 		singleton = &MysqlConnection{Conn: conn}
 		log.Println("Mysql connection created")
 	}
+
+	ctx := context.Background()
+	timeOutCtx, cancel := context.WithTimeout(ctx, 1*time.Second)
+	defer cancel()
+	err := singleton.Conn.PingContext(timeOutCtx)
+	if err != nil {
+		fmt.Printf("Error connecting to mysql: %v\n", err)
+		singleton = nil
+		return nil
+	}
 	return singleton
 }
 
@@ -59,13 +71,22 @@ func GetRedisConnection() *RedisConnection {
 			panic(err)
 		}
 		conn := redis.NewClient(&redis.Options{
-			Addr:     fmt.Sprintf("%s:%s", os.Getenv(RedisHost), os.Getenv(RedisPort)),
-			Password: os.Getenv(RedisPass),
-			Username: os.Getenv(RedisUser),
-			DB:       db,
+			Addr: fmt.Sprintf("%s:%s", os.Getenv(RedisHost), os.Getenv(RedisPort)),
+			//Password: os.Getenv(RedisPass),
+			//Username: os.Getenv(RedisUser),
+			DB: db,
 		})
 		singletonRedis = &RedisConnection{Conn: conn}
 		log.Println("Redis connection created")
+	}
+	ctx := context.Background()
+	timeOutCtx, cancel := context.WithTimeout(ctx, 50*time.Millisecond)
+	defer cancel()
+	_, err := singletonRedis.Conn.Ping(timeOutCtx).Result()
+	if err != nil {
+		fmt.Printf("Error connecting to redis: %v\n", err)
+		singletonRedis = nil
+		return nil
 	}
 	return singletonRedis
 }
