@@ -8,6 +8,7 @@ import (
 	"runtime"
 
 	"github.com/gin-gonic/gin"
+	cors "github.com/rs/cors/wrapper/gin"
 )
 
 func main() {
@@ -21,14 +22,24 @@ func main() {
 	cores := runtime.NumCPU()
 	os.Setenv(config.LocalCoreCount, fmt.Sprintf("%d", cores))
 
-	router := gin.Default()
+	router := gin.New()
+
+	router.Use(cors.New(cors.Options{
+		AllowCredentials: true,
+		AllowOriginFunc:  func(origin string) bool { return true },
+		AllowedHeaders:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "HEAD", "OPTIONS", "DELETE"},
+	}))
+
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
+	router.LoadHTMLGlob("templates/*")
 
 	router.GET("/", func(c *gin.Context) {
 
-		c.JSON(200, gin.H{
-			"message": "Hello, World!",
-			"serving": os.Getenv(config.LocalHostname),
-			"cores":   os.Getenv(config.LocalCoreCount),
+		c.HTML(200, "index.tmpl", gin.H{
+			"hostname": os.Getenv(config.LocalHostname),
+			"cores":    os.Getenv(config.LocalCoreCount),
 		})
 	})
 
